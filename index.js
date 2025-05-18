@@ -79,10 +79,8 @@ async function getStickerlyImages(packUrl) {
   const page = await browser.newPage();
   await page.goto(packUrl, { waitUntil: "networkidle2" });
 
-  // Aguarda os stickers aparecerem
   await page.waitForSelector("img.sticker_img");
 
-  // Extrai as URLs das imagens dos stickers (agora .png)
   const images = await page.evaluate(() => {
     return Array.from(document.querySelectorAll("img.sticker_img"))
       .map((img) => img.src)
@@ -94,7 +92,6 @@ async function getStickerlyImages(packUrl) {
 }
 
 bot.on("message:text", async (ctx) => {
-  // Se está aguardando emojis
   if (
     ctx.session.awaitingEmojis &&
     ctx.session.stickerlyLink &&
@@ -134,6 +131,7 @@ bot.on("message:text", async (ctx) => {
       processingMsg.message_id,
       `✅ Encontrei ${images.length} stickers! Vou criar um novo pack no Telegram. Aguarde...`
     );
+
     // 1. Baixar e converter todas as imagens
     const stickerFiles = [];
     for (let i = 0; i < images.length; i++) {
@@ -161,6 +159,7 @@ bot.on("message:text", async (ctx) => {
         );
       }
     }
+
     if (stickerFiles.length === 0) {
       await ctx.api.editMessageText(
         ctx.chat.id,
@@ -169,16 +168,15 @@ bot.on("message:text", async (ctx) => {
       );
       return;
     }
+
     // 2. Criar novo pack
     const userId = ctx.from.id;
     const username = ctx.from.username || `user${userId}`;
     const timestamp = Date.now();
     const setName =
       `stickerly_${userId}_${timestamp}_by_${bot.me.username}`.toLowerCase();
-    // Usa emoji do usuário ou fallback para 😀
     const emojisArr = images.map((_, i) => emojiList[i] || "😀");
 
-    // Log para debug
     console.log("Criando pack com:", {
       userId,
       setName,
@@ -188,7 +186,6 @@ bot.on("message:text", async (ctx) => {
     });
 
     try {
-      // Nova API - passa stickers como array de objetos JSON
       await ctx.api.createNewStickerSet(userId, setName, packTitle, [
         {
           sticker: new InputFile(stickerFiles[0]),
@@ -240,6 +237,7 @@ bot.on("message:text", async (ctx) => {
       }
     }
     stickerFiles.forEach((f) => fs.unlinkSync(f));
+
     // 4. Enviar link do pack
     const packUrl = `https://t.me/addstickers/${setName}`;
     await ctx.api.editMessageText(
@@ -249,6 +247,7 @@ bot.on("message:text", async (ctx) => {
     );
     return;
   }
+
   // Se está aguardando título do pack
   if (ctx.session.awaitingTitle && ctx.session.stickerlyLink) {
     ctx.session.packTitle = ctx.message.text.trim().slice(0, 64);
