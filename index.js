@@ -18,21 +18,37 @@ bot.use(session({ initial: () => ({}) }));
 (async () => {
   await bot.api.setMyCommands([
     { command: "start", description: "Iniciar o bot" },
+    {
+      command: "stickerly",
+      description: "Importar pack do Sticker.ly para o Telegram",
+    },
     { command: "cancel", description: "Cancelar a ação atual" },
   ]);
 })();
 
 bot.command("start", (ctx) =>
   ctx.reply(
-    "👋 Envie um sticker, imagem ou link de pack do Sticker.ly para importar para o Telegram!"
+    "👋 Envie uma imagem ou um link de pack do Sticker.ly para importar para o Telegram!"
   )
 );
 
 bot.command("cancel", async (ctx) => {
+  if (!ctx.session.awaitingEmojis && !ctx.session.stickerlyLink) {
+    await ctx.reply(
+      "Não há nenhum comando ativo para cancelar, eu não estava fazendo nada de qualquer forma... 😴"
+    );
+    return;
+  }
   ctx.session.awaitingEmojis = false;
   ctx.session.stickerlyLink = undefined;
   await ctx.reply(
     "❌ Ação cancelada. Você pode enviar um novo link a qualquer momento."
+  );
+});
+
+bot.command("stickerly", async (ctx) => {
+  await ctx.reply(
+    "🔗 Envie um link de pack do Sticker.ly para importar os stickers para o Telegram!"
   );
 });
 
