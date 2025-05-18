@@ -1,0 +1,21 @@
+{
+  "name": "zap-sticker-bot",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@grammyjs/files": "^1.1.1",
+    "axios": "^1.9.0",
+    "cheerio": "^1.0.0",
+    "dotenv": "^16.5.0",
+    "grammy": "^1.36.1",
+    "puppeteer": "^24.8.2",
+    "sharp": "^0.34.1"
+  }
+}
