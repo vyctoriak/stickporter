@@ -23,7 +23,9 @@ bot.use(session({ initial: () => ({}) }));
 })();
 
 bot.command("start", (ctx) =>
-  ctx.reply(`👋 Envie um sticker ou imagem para importar!`)
+  ctx.reply(
+    "👋 Envie um sticker, imagem ou link de pack do Sticker.ly para importar para o Telegram!"
+  )
 );
 
 bot.command("cancel", async (ctx) => {
