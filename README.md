@@ -67,7 +67,11 @@ A Telegram bot to import Sticker.ly packs and images as Telegram sticker sets, w
 
 3. **Configure environment variables:**
 
-   - Create a `.env` file with:
+   - Copy or rename `.env.example` to `.env`:
+     ```sh
+     cp .env.example .env
+     ```
+   - Edit the `.env` file and set your bot token:
      ```
      BOT_TOKEN=your_telegram_bot_token_here
      ```
