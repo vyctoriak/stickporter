@@ -6,7 +6,6 @@ const axios = require("axios");
 const sharp = require("sharp");
 const fs = require("fs");
 const path = require("path");
-const cheerio = require("cheerio");
 const { session } = require("grammy");
 const puppeteer = require("puppeteer");
 
@@ -38,7 +37,7 @@ bot.use(session({ initial: () => ({ userPacks: [] }) }));
   ]);
 })();
 
-bot.command("start", (ctx) =>
+bot.command("start", (ctx) => {
   ctx.reply(
     "👋 Envie uma imagem ou um link de pack do Sticker.ly para importar para o Telegram!\n\n" +
       "📋 Comandos disponíveis:\n" +
@@ -47,9 +46,9 @@ bot.command("start", (ctx) =>
       "/setpackicon - Definir ícone do pack\n" +
       "/renamepack - Renomear pack\n" +
       "/deletepack - Deletar pack\n" +
-      "/cancel - Cancelar ação atual"
-  )
-);
+      "/cancel - Cancelar ação atual\n"
+  );
+});
 
 bot.command("cancel", async (ctx) => {
   if (
@@ -558,7 +557,10 @@ bot.on("message:text", async (ctx) => {
     ctx.session.stickerlyLink &&
     ctx.session.packTitle
   ) {
-    const emojiList = ctx.message.text.match(/\p{Emoji}/gu) || [];
+    let emojiList = ctx.message.text.match(/\p{Emoji}/gu) || [];
+    if (ctx.message.text.trim() === ".") {
+      emojiList = [];
+    }
     ctx.session.awaitingEmojis = false;
     const stickerlyLink = ctx.session.stickerlyLink;
     const packTitle = ctx.session.packTitle;
@@ -723,7 +725,7 @@ bot.on("message:text", async (ctx) => {
     ctx.session.awaitingTitle = false;
     ctx.session.awaitingEmojis = true;
     await ctx.reply(
-      "📝 Agora envie uma lista de emojis (um para cada sticker, na ordem). Se faltar, será usado 😀."
+      "📝 Agora envie uma lista de emojis (um para cada sticker, na ordem). Se faltar, será usado '😀' para todos, ou pule essa etapa enviando um ponto '.'"
     );
     return;
   }

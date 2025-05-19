@@ -1,3 +1,4 @@
 .env
 stickers/
 node_modules/
+.env.local
