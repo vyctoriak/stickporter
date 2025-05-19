@@ -12,6 +12,11 @@ const puppeteer = require("puppeteer");
 
 const bot = new Bot(process.env.BOT_TOKEN);
 
+const stickersDir = path.join(__dirname, "stickers");
+if (!fs.existsSync(stickersDir)) {
+  fs.mkdirSync(stickersDir, { recursive: true });
+}
+
 bot.api.config.use(hydrateFiles(bot.token));
 bot.use(session({ initial: () => ({ userPacks: [] }) }));
 
