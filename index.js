@@ -54,7 +54,9 @@ bot.command("cancel", async (ctx) => {
     !ctx.session.awaitingSticker &&
     !ctx.session.awaitingNewPackName &&
     !ctx.session.awaitingPackIcon &&
-    !ctx.session.awaitingTitle
+    !ctx.session.awaitingTitle &&
+    !ctx.session.awaitingDeleteConfirmation &&
+    !ctx.session.awaitingPackSelection
   ) {
     await ctx.reply(
       "Não há nenhum comando ativo para cancelar, eu não estava fazendo nada de qualquer forma... 😴"
@@ -70,6 +72,8 @@ bot.command("cancel", async (ctx) => {
   ctx.session.awaitingNewPackName = false;
   ctx.session.awaitingPackIcon = false;
   ctx.session.awaitingTitle = false;
+  ctx.session.awaitingDeleteConfirmation = false;
+  ctx.session.awaitingPackSelection = undefined;
   ctx.session.packTitle = undefined;
   ctx.session.selectedPackName = undefined;
 
@@ -100,6 +104,8 @@ bot.command("addsticker", async (ctx) => {
   });
   keyboard.text("📝 Digitar nome manualmente", "addsticker_manual");
 
+  ctx.session.awaitingPackSelection = "addsticker";
+
   await ctx.reply("📦 Selecione o pack onde quer adicionar o sticker:", {
     reply_markup: keyboard,
   });
@@ -120,6 +126,8 @@ bot.command("setpackicon", async (ctx) => {
     keyboard.text(pack.title, `setpackicon_${index}`).row();
   });
   keyboard.text("📝 Digitar nome manualmente", "setpackicon_manual");
+
+  ctx.session.awaitingPackSelection = "setpackicon";
 
   await ctx.reply("🎨 Selecione o pack para definir o ícone:", {
     reply_markup: keyboard,
@@ -142,6 +150,8 @@ bot.command("renamepack", async (ctx) => {
   });
   keyboard.text("📝 Digitar nome manualmente", "renamepack_manual");
 
+  ctx.session.awaitingPackSelection = "renamepack";
+
   await ctx.reply("✏️ Selecione o pack que quer renomear:", {
     reply_markup: keyboard,
   });
@@ -162,6 +172,8 @@ bot.command("deletepack", async (ctx) => {
     keyboard.text(pack.title, `deletepack_${index}`).row();
   });
   keyboard.text("📝 Digitar nome manualmente", "deletepack_manual");
+
+  ctx.session.awaitingPackSelection = "deletepack";
 
   await ctx.reply(
     "🗑️ Selecione o pack que quer deletar:\n" +
@@ -513,6 +525,28 @@ async function getStickerlyImages(packUrl) {
 }
 
 bot.on("message:text", async (ctx) => {
+  // Prioridade: se for link do Sticker.ly, sempre inicia o fluxo de importação
+  const stickerlyRegex = /https?:\/\/(?:www\.)?sticker\.ly\/.+/i;
+  if (stickerlyRegex.test(ctx.message.text)) {
+    // Limpa qualquer estado anterior de sessão
+    ctx.session.awaitingEmojis = false;
+    ctx.session.stickerlyLink = undefined;
+    ctx.session.awaitingPackName = false;
+    ctx.session.awaitingSticker = false;
+    ctx.session.awaitingNewPackName = false;
+    ctx.session.awaitingPackIcon = false;
+    ctx.session.awaitingTitle = false;
+    ctx.session.packTitle = undefined;
+    ctx.session.selectedPackName = undefined;
+
+    ctx.session.awaitingTitle = true;
+    ctx.session.stickerlyLink = ctx.message.text;
+    await ctx.reply(
+      "✏️ Qual título você quer para o pack? (máx. 64 caracteres)"
+    );
+    return;
+  }
+
   // Se está aguardando emojis para o Sticker.ly
   if (
     ctx.session.awaitingEmojis &&
@@ -794,17 +828,6 @@ bot.on("message:text", async (ctx) => {
     return;
   }
 
-  // Se recebeu link do Sticker.ly, pede título
-  const stickerlyRegex = /https?:\/\/(?:www\.)?sticker\.ly\/.+/i;
-  if (stickerlyRegex.test(ctx.message.text)) {
-    ctx.session.awaitingTitle = true;
-    ctx.session.stickerlyLink = ctx.message.text;
-    await ctx.reply(
-      "✏️ Qual título você quer para o pack? (máx. 64 caracteres)"
-    );
-    return;
-  }
-
   // Caso não seja nenhuma operação específica
   await ctx.reply(
     "🤔 Não entendi. Use um dos comandos disponíveis:\n" +
@@ -832,6 +855,7 @@ bot.callbackQuery(
 
     const pack = ctx.session.userPacks[packIndex];
     ctx.session.selectedPackName = pack.name;
+    ctx.session.awaitingPackSelection = undefined;
 
     await ctx.answerCallbackQuery();
     await ctx.editMessageText(`✅ Pack selecionado: **${pack.title}**`, {
@@ -860,6 +884,8 @@ bot.callbackQuery(
         .text("✅ Sim, deletar", `confirm_delete_${packIndex}`)
         .text("❌ Cancelar", "cancel_delete");
 
+      ctx.session.awaitingDeleteConfirmation = true;
+
       await ctx.reply(
         `🗑️ Tem certeza que quer deletar o pack "${pack.title}"?\n` +
           `⚠️ Esta ação é irreversível!`,
@@ -874,6 +900,7 @@ bot.callbackQuery(
   async (ctx) => {
     const [, operation] = ctx.match;
     ctx.session.awaitingPackName = operation;
+    ctx.session.awaitingPackSelection = undefined;
 
     await ctx.answerCallbackQuery();
     await ctx.editMessageText(
@@ -899,9 +926,12 @@ bot.callbackQuery(/^confirm_delete_(\d+)$/, async (ctx) => {
     // Remover pack da sessão
     ctx.session.userPacks.splice(packIndex, 1);
 
+    ctx.session.awaitingDeleteConfirmation = false;
+
     await ctx.answerCallbackQuery("✅ Pack deletado!");
     await ctx.editMessageText(`✅ Pack "${pack.title}" deletado com sucesso!`);
   } catch (err) {
+    ctx.session.awaitingDeleteConfirmation = false;
     console.error(err);
     let errorMsg = "🚨 Erro ao deletar pack.";
     if (err.description && err.description.includes("STICKER_SET_NOT_EXISTS")) {
@@ -917,6 +947,7 @@ bot.callbackQuery(/^confirm_delete_(\d+)$/, async (ctx) => {
 });
 
 bot.callbackQuery("cancel_delete", async (ctx) => {
+  ctx.session.awaitingDeleteConfirmation = false;
   await ctx.answerCallbackQuery("❌ Cancelado");
   await ctx.editMessageText("❌ Operação cancelada.");
 });
