@@ -1,19 +1,19 @@
-# StickerPorter Bot
+# 🤖 StickerPorter Bot
 
 A Telegram bot to import Sticker.ly packs and images as Telegram sticker sets, with emoji and title customization.
 
-## Features
+## ✨ Features
 
-- **Import Sticker.ly packs:** Send a Sticker.ly pack link and the bot will create a Telegram sticker set for you.
-- **Custom emojis:** Choose which emoji to assign to each sticker.
-- **Custom pack title:** Choose the name of your new Telegram sticker set.
-- **Image to sticker:** Send an image (PNG, JPEG, WEBP) and get it back as a Telegram sticker.
-- **Progress feedback:** The bot shows progress and error messages during the import process.
-- **Cancel anytime:** Use `/cancel` to abort the current operation.
+- 🗂️ **Import Sticker.ly packs:** Send a Sticker.ly pack link and the bot will create a Telegram sticker set for you.
+- 😃 **Custom emojis:** Choose which emoji to assign to each sticker.
+- 🏷️ **Custom pack title:** Choose the name of your new Telegram sticker set.
+- 🖼️ **Image to sticker:** Send an image (PNG, JPEG, WEBP) and get it back as a Telegram sticker.
+- ⏳ **Progress feedback:** The bot shows progress and error messages during the import process.
+- ❌ **Cancel anytime:** Use `/cancel` to abort the current operation.
 
 ---
 
-## Usage
+## 🚀 Usage
 
 1. **Start the bot:**  
    Send `/start` to see the welcome message.
@@ -32,53 +32,53 @@ A Telegram bot to import Sticker.ly packs and images as Telegram sticker sets, w
 
 4. **Add a sticker to an existing pack:**
 
-   - Send `/addsticker`.
+   - Send `/addsticker` 🆕.
    - Select a pack or enter its technical name.
    - Send the image you want to add as a sticker.
 
 5. **Set a pack icon:**
 
-   - Send `/setpackicon`.
+   - Send `/setpackicon` 🖼️.
    - Select a pack or enter its technical name.
    - Send the image to be used as the pack icon.
 
 6. **Rename a sticker pack:**
 
-   - Send `/renamepack`.
+   - Send `/renamepack` ✏️.
    - Select a pack or enter its technical name.
    - Enter the new title for your pack.
 
 7. **Delete a sticker pack:**
 
-   - Send `/deletepack`.
+   - Send `/deletepack` 🗑️.
    - Select a pack or enter its technical name.
    - Confirm the deletion when prompted.
 
 8. **Cancel an operation:**
-   - Send `/cancel` at any time to abort the current import or emoji selection.
+   - Send `/cancel` ❌ at any time to abort the current import or emoji selection.
 
 ---
 
-## Commands
+## 📝 Commands
 
-- `/start` – Show welcome/help message.
-- `/stickerly` – Instructions for importing a Sticker.ly pack.
-- `/addsticker` – Add a sticker to an existing pack.
-- `/setpackicon` – Set the icon for a sticker pack.
-- `/renamepack` – Rename a sticker pack.
-- `/deletepack` – Delete a sticker pack.
-- `/cancel` – Cancel the current operation.
+- 🏁 `/start` – Show welcome/help message.
+- 🔗 `/stickerly` – Instructions for importing a Sticker.ly pack.
+- ➕ `/addsticker` – Add a sticker to an existing pack.
+- 🖼️ `/setpackicon` – Set the icon for a sticker pack.
+- ✏️ `/renamepack` – Rename a sticker pack.
+- 🗑️ `/deletepack` – Delete a sticker pack.
+- ❌ `/cancel` – Cancel the current operation.
 
 ---
 
-## Requirements
+## ⚙️ Requirements
 
 - Node.js 18+
 - Telegram bot token (from [@BotFather](https://t.me/BotFather))
 
 ---
 
-## Setup
+## 🛠️ Setup
 
 1. **Clone the repository:**
 
@@ -111,7 +111,7 @@ A Telegram bot to import Sticker.ly packs and images as Telegram sticker sets, w
 
 ---
 
-## How it works
+## 🧩 How it works
 
 - **Sticker.ly packs:**  
   The bot uses Puppeteer to scrape sticker images from Sticker.ly pack links. It downloads the PNGs, resizes them to 512x512, and uploads them as a new Telegram sticker set.
@@ -122,7 +122,7 @@ A Telegram bot to import Sticker.ly packs and images as Telegram sticker sets, w
 
 ---
 
-## Troubleshooting
+## 🐞 Troubleshooting
 
 - **Bot says "can't parse stickers JSON object" or "invalid user_id specified":**  
   Make sure you are using the latest version of `grammy` and `@grammyjs/files`, and that you are using the correct API call format (see code).
@@ -133,13 +133,13 @@ A Telegram bot to import Sticker.ly packs and images as Telegram sticker sets, w
 
 ---
 
-## Contributing
+## 🤝 Contributing
 
 Pull requests and suggestions are welcome!  
 If you find a bug or want a new feature, open an issue or PR.
 
 ---
 
-## License
+## 📄 License
 
 MIT
