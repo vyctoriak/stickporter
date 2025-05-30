@@ -516,10 +516,12 @@ async function getStickerlyImages(packUrl) {
   const page = await browser.newPage();
   await page.goto(packUrl, { waitUntil: "networkidle2" });
 
-  await page.waitForSelector("img.sticker_img");
+  await page.waitForSelector(".section_sticker_area img.sticker_img");
 
   const images = await page.evaluate(() => {
-    return Array.from(document.querySelectorAll("img.sticker_img"))
+    return Array.from(
+      document.querySelectorAll(".section_sticker_area img.sticker_img")
+    )
       .map((img) => img.src)
       .filter((src) => src.endsWith(".png"));
   });
